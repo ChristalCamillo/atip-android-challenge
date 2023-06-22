@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.olxbr.android.challenge.listing.model.Ad
-import com.olxbr.android.challenge.listing.data.ListingService
+import com.olxbr.android.challenge.listing.data.datasource.remote.RetrofitService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +31,7 @@ sealed class ListingAction {
 }
 
 class ListingViewModel(
-    private val service: ListingService,
+    private val service: RetrofitService,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : ViewModel() {
 
@@ -64,5 +64,5 @@ class ListingViewModel(
 class ListingViewModelFactory : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        ListingViewModel(ListingService()) as T
+        ListingViewModel(RetrofitService()) as T
 }

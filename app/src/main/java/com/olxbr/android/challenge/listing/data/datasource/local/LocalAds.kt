@@ -1,4 +1,4 @@
-package com.olxbr.android.challenge.listing.data
+package com.olxbr.android.challenge.listing.data.datasource.local
 
 import com.olxbr.android.challenge.listing.model.Ad
 
