@@ -3,8 +3,9 @@ package com.olxbr.android.challenge.listing.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.olxbr.android.challenge.listing.model.Ad
 import com.olxbr.android.challenge.listing.data.datasource.remote.RetrofitService
+import com.olxbr.android.challenge.listing.domain.AdsRepository
+import com.olxbr.android.challenge.listing.model.Ad
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +32,7 @@ sealed class ListingAction {
 }
 
 class ListingViewModel(
-    private val service: RetrofitService,
+    private val repository: AdsRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : ViewModel() {
 
@@ -47,22 +48,28 @@ class ListingViewModel(
 
     private fun initialize() {
         viewModelScope.launch(dispatcher) {
-            _state.update { ListingState.Success(service.getAds()) }
+            _state.update { ListingState.Success(repository.getAds()) }
         }
     }
 
     private fun filter(query: String) {
         viewModelScope.launch(dispatcher) {
             val result =
-                service.getAds().filter { ad -> ad.subject.startsWith(query) }
+                repository.getAds().filter { ad -> ad.subject.startsWith(query) }
 
             _state.update { ListingState.Success(result, query) }
         }
     }
 }
 
-class ListingViewModelFactory : ViewModelProvider.NewInstanceFactory() {
+class ListingViewModelFactory(private val retrofitService: RetrofitService) :
+    ViewModelProvider.Factory {
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        ListingViewModel(RetrofitService()) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(ListingViewModel::class.java)) {
+            val repository = AdsRepository(retrofitService)
+            return ListingViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
 }
