@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,7 +51,7 @@ fun Listing(
 }
 
 @Composable
-fun Listing(state: ListingState.Error){
+fun ListingStateError(state: ListingState.Error){
     Column(verticalArrangement = Arrangement.Center) {
         Text(text = state.message,
         modifier = Modifier.align(CenterHorizontally))
@@ -61,11 +62,27 @@ fun Listing(state: ListingState.Error){
     }
 }
 
+@Composable
+fun ListingStateLoading(state: ListingState.Loading){
+    Column(verticalArrangement = Arrangement.Center) {
+        CircularProgressIndicator()
+    }
+}
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewListingScreen(){
+fun PreviewListingErrorScreen(){
     DesafioAndroidTheme() {
         val state: ListingState.Error = ListingState.Error("An error has ocurred")
-        Listing(state = state)
+        ListingStateError(state)
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun PreviewListingLoadingScreen(){
+    DesafioAndroidTheme() {
+        val state: ListingState.Loading = ListingState.Loading()
+        ListingStateLoading(state)
     }
 }
