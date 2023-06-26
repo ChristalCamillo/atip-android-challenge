@@ -3,7 +3,6 @@ package com.olxbr.android.challenge.listing.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.olxbr.android.challenge.listing.data.datasource.remote.RetrofitService
 import com.olxbr.android.challenge.listing.domain.AdsRepository
 import com.olxbr.android.challenge.listing.model.Ad
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import retrofit2.Response
 
 sealed class ListingState {
 
@@ -50,27 +48,27 @@ class ListingViewModel(
 
     private fun initSearchBarAndAdsList(query: String=""){
         viewModelScope.launch(dispatcher){
-            when(val ads: Response<List<Ad>> = repository.getAds()){
-
+            when(val ads: com.olxbr.android.challenge.listing.domain.Response<List<Ad>> = repository.getAds()){
+                is com.olxbr.android.challenge.listing.domain.Response.Error -> _state.update { ListingState.Error("An error has ocurred") }
+                is com.olxbr.android.challenge.listing.domain.Response.Success -> {
+                    if(query.isNotEmpty()){
+                        val result = ads.data.filter { ad -> Regex(query, RegexOption.IGNORE_CASE).containsMatchIn(ad.subject) }
+                    }else{
+                        _state.update { ListingState.Success(ads.data) }
+                    }
+                }
             }
         }
     }
 
     private fun initialize() {
-initSearchBarAndAdsList()
+        initSearchBarAndAdsList()
     }
 
     private fun filter(query: String) {
-        viewModelScope.launch(dispatcher) {
-            val result =
-                repository.getAds().filter { ad -> ad.subject.startsWith(query) }
-
-            _state.update { ListingState.Success(result, query) }
-        }
+        initSearchBarAndAdsList(query)
     }
 }
-
-
 
 class ListingViewModelFactory(private val retrofitService: RetrofitService) :
     ViewModelProvider.Factory {
