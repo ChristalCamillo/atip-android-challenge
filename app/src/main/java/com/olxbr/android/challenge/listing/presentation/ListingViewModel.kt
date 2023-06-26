@@ -53,6 +53,7 @@ class ListingViewModel(
                 is com.olxbr.android.challenge.listing.domain.Response.Success -> {
                     if(query.isNotEmpty()){
                         val result = ads.data.filter { ad -> Regex(query, RegexOption.IGNORE_CASE).containsMatchIn(ad.subject) }
+                        _state.update { ListingState.Success(result, query) }
                     }else{
                         _state.update { ListingState.Success(ads.data) }
                     }
