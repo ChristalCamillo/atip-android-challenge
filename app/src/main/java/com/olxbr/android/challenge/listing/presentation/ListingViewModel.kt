@@ -3,6 +3,7 @@ package com.olxbr.android.challenge.listing.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.olxbr.android.challenge.listing.data.datasource.remote.RetrofitService
 import com.olxbr.android.challenge.listing.domain.AdsRepository
 import com.olxbr.android.challenge.listing.model.Ad
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 sealed class ListingState {
 
@@ -46,10 +48,16 @@ class ListingViewModel(
         }
     }
 
-    private fun initialize() {
-        viewModelScope.launch(dispatcher) {
-            _state.update { ListingState.Success(repository.getAds()) }
+    private fun initSearchBarAndAdsList(query: String=""){
+        viewModelScope.launch(dispatcher){
+            when(val ads: Response<List<Ad>> = repository.getAds()){
+
+            }
         }
+    }
+
+    private fun initialize() {
+initSearchBarAndAdsList()
     }
 
     private fun filter(query: String) {
@@ -62,9 +70,10 @@ class ListingViewModel(
     }
 }
 
+
+
 class ListingViewModelFactory(private val retrofitService: RetrofitService) :
     ViewModelProvider.Factory {
-
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ListingViewModel::class.java)) {
             val repository = AdsRepository(retrofitService)
@@ -73,3 +82,4 @@ class ListingViewModelFactory(private val retrofitService: RetrofitService) :
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
+
