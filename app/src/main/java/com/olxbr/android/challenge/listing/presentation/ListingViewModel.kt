@@ -48,12 +48,11 @@ class ListingViewModel(
 
     private fun initSearchBarAndAdsList(query: String=""){
         viewModelScope.launch(dispatcher){
-            when(val ads: com.olxbr.android.challenge.listing.domain.Response<List<Ad>> = repository.getAds()){
+            when(val ads: com.olxbr.android.challenge.listing.domain.Response<List<Ad>> = repository.getAds(query)){
                 is com.olxbr.android.challenge.listing.domain.Response.Error -> _state.update { ListingState.Error("An error has ocurred") }
                 is com.olxbr.android.challenge.listing.domain.Response.Success -> {
                     if(query.isNotEmpty()){
-                        val result = ads.data.filter { ad -> Regex(query, RegexOption.IGNORE_CASE).containsMatchIn(ad.subject) }
-                        _state.update { ListingState.Success(result, query) }
+                        _state.update { ListingState.Success(ads.data, query) }
                     }else{
                         _state.update { ListingState.Success(ads.data) }
                     }

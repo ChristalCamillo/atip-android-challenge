@@ -17,7 +17,7 @@ import org.junit.Test
         @Test
         fun shouldInitializeSuccessfully() = runTest {
             val repository: AdsRepository = mockk()
-            coEvery { repository.getAds() } returns Response.Success(data = listOf())
+            coEvery { repository.getAds(query = "") } returns Response.Success(data = listOf())
 
             val viewModel = ListingViewModel(repository)
 
@@ -27,4 +27,6 @@ import org.junit.Test
                 assertEquals(ListingState.Success(listOf()), awaitItem())
             }
         }
+
+
     }

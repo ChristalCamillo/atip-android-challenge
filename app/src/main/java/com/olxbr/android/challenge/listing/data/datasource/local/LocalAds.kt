@@ -2,6 +2,7 @@ package com.olxbr.android.challenge.listing.data.datasource.local
 
 import com.olxbr.android.challenge.listing.model.Ad
 
+
 val localAds = listOf(
     Ad(
         thumbnail = "https://img.olx.com.br/thumbs256x256/24/245394415450729.jpg",
