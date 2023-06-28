@@ -9,6 +9,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.olxbr.android.challenge.listing.data.datasource.local.localAds
 import com.olxbr.android.challenge.ui.theme.DesafioAndroidTheme
 
 @Composable
@@ -32,6 +34,16 @@ fun ListingScreen(
                 is ListingState.Success -> Listing(state, onAction)
             }
         }
+    }
+}
+
+@Preview(showSystemUi = true, showBackground = true)
+@Composable
+fun ListingScreenPreview(){
+    DesafioAndroidTheme() {
+        val state: ListingState.Success = ListingState.Success(localAds)
+        Listing(state = state)
+
     }
 }
 
